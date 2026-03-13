@@ -1,0 +1,132 @@
+import React, { useState, useRef, useEffect } from 'react';
+import { HexColorPicker } from 'react-colorful';
+import { Trash2, ChevronDown } from 'lucide-react';
+import { BranchData } from '../types';
+import { clsx, type ClassValue } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+
+interface BranchItemProps {
+  branch: BranchData;
+  onChange: (id: string, updates: Partial<BranchData>) => void;
+  onRemove: (id: string) => void;
+  index: number;
+}
+
+export const BranchItem: React.FC<BranchItemProps> = ({ branch, onChange, onRemove, index }) => {
+  const [showColorPicker, setShowColorPicker] = useState(false);
+  const colorPickerRef = useRef<HTMLDivElement>(null);
+
+  // Close color picker when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (colorPickerRef.current && !colorPickerRef.current.contains(event.target as Node)) {
+        setShowColorPicker(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  return (
+    <div className="glass-panel p-4 mb-4 relative transition-all hover:bg-[var(--color-panel-hover)]">
+      <div className="flex items-start justify-between mb-3">
+        <div className="flex items-center gap-2">
+          <div className="w-6 h-6 rounded-full flex items-center justify-center bg-white/5 text-xs text-cyan-400 font-bold border border-cyan-400/30">
+            {index + 1}
+          </div>
+          <h3 className="font-semibold text-gray-200">Branch</h3>
+        </div>
+        <button 
+          onClick={() => onRemove(branch.id)}
+          disabled={!branch.isDeletable}
+          className="text-gray-400 hover:text-pink-500 disabled:opacity-30 disabled:hover:text-gray-400 transition-colors"
+          title={!branch.isDeletable ? "Core branches cannot be removed" : "Remove branch"}
+        >
+          <Trash2 size={18} />
+        </button>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Name Input */}
+        <div className="flex flex-col gap-1 md:col-span-2">
+          <label className="text-xs text-gray-400 uppercase tracking-wider">Name</label>
+          <input 
+            type="text" 
+            value={branch.name}
+            onChange={(e) => onChange(branch.id, { name: e.target.value })}
+            placeholder="e.g., Intelligence"
+            className={cn("glass-input w-full", !branch.name && "border-pink-500/50 focus:border-pink-500 ring-pink-500/20")}
+          />
+        </div>
+
+        {/* Value Inputs */}
+        <div className="flex flex-col gap-1">
+          <label className="text-xs text-gray-400 uppercase tracking-wider">Value</label>
+          <div className="flex items-center gap-2">
+            <input 
+              type="number" 
+              value={branch.value}
+              onChange={(e) => onChange(branch.id, { value: Number(e.target.value) })}
+              className="glass-input w-full"
+            />
+          </div>
+        </div>
+
+        {/* Min/Max Inputs */}
+        <div className="flex flex-col gap-1">
+          <label className="text-xs text-gray-400 uppercase tracking-wider">Min / Max</label>
+          <div className="flex items-center gap-2">
+            <input 
+              type="number" 
+              value={branch.min}
+              onChange={(e) => onChange(branch.id, { min: Number(e.target.value) })}
+              className="glass-input w-1/2"
+              placeholder="Min"
+            />
+            <span className="text-gray-500">/</span>
+            <input 
+              type="number" 
+              value={branch.max}
+              onChange={(e) => onChange(branch.id, { max: Number(e.target.value) })}
+              className="glass-input w-1/2"
+              placeholder="Max"
+            />
+          </div>
+        </div>
+
+        {/* Color Picker Toggle */}
+        <div className="flex flex-col gap-1 md:col-span-2">
+          <label className="text-xs text-gray-400 uppercase tracking-wider">Chart Color Accent</label>
+          <div className="relative" ref={colorPickerRef}>
+            <button 
+              onClick={() => setShowColorPicker(!showColorPicker)}
+              className="glass-input w-full flex items-center justify-between"
+            >
+              <div className="flex items-center gap-2">
+                <div 
+                  className="w-5 h-5 rounded-full border border-white/20 shadow-sm"
+                  style={{ backgroundColor: branch.color }}
+                />
+                <span className="text-sm font-mono">{branch.color}</span>
+              </div>
+              <ChevronDown size={16} className="text-gray-400" />
+            </button>
+            
+            {showColorPicker && (
+              <div className="absolute top-full left-0 mt-2 z-50 glass-panel p-3">
+                <HexColorPicker 
+                  color={branch.color} 
+                  onChange={(color) => onChange(branch.id, { color })} 
+                />
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
