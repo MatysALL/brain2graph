@@ -19,7 +19,27 @@ interface RadarVisualizerProps {
   recenterTrigger?: number;
 }
 
-// Removed Recharts Built-in Tooltip (It intercepted pointer events obscuring the popup wrapper).
+// Custom Tooltip specifically for Data Points (Radar hover)
+const CustomTooltip = ({ active, payload }: any) => {
+  if (active && payload && payload.length) {
+    const data = payload[0].payload;
+    return (
+      <div className="bg-black/95 backdrop-blur-xl border border-white/20 rounded-md p-3 shadow-2xl pointer-events-none">
+        <p className="font-bold text-[13px] mb-1" style={{ color: data.color || '#fff' }}>
+          {data.subject}
+        </p>
+        <p className="text-gray-300 font-mono text-xs mb-1">
+          Valeur : <span className="text-cyan-400 font-bold text-[14px]">{data.originalValue}</span>
+        </p>
+        <p className="text-gray-500 font-mono text-[10px]">
+          Min: {data.min} | Max: {data.max}
+        </p>
+      </div>
+    );
+  }
+  return null;
+};
+
 
 // Custom Axis Tick with Hover & Description Support
 const renderCustomTick = (props: any) => {
@@ -399,6 +419,12 @@ export const RadarVisualizer: React.FC<RadarVisualizerProps> = ({
               tick={false}
               tickCount={5} // 0, 25, 50, 75, 100
               axisLine={false}
+            />
+
+            <Tooltip 
+              content={<CustomTooltip />} 
+              wrapperStyle={{ pointerEvents: 'none', zIndex: 9999 }}
+              isAnimationActive={false}
             />
 
             <Radar
