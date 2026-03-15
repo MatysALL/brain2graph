@@ -107,25 +107,20 @@ const renderCustomTick = (props: any) => {
           width="150" 
           height="120" 
           className="overflow-visible"
-          style={{ pointerEvents: 'auto', zIndex: 9999 }}
+          style={{ pointerEvents: 'all', zIndex: 9999 }}
         >
           <div
-            className="flex flex-col gap-2 bg-black/95 backdrop-blur-xl border border-white/20 rounded-md p-3 shadow-2xl animate-in fade-in duration-100 pointer-events-auto"
+            className="flex flex-col gap-2 bg-black/95 backdrop-blur-xl border border-white/20 rounded-md p-3 shadow-2xl animate-in fade-in duration-100"
+            style={{ pointerEvents: 'all' }}
           >
             <div className="flex items-center justify-between border-b border-white/10 pb-1">
               <span className="font-bold text-xs" style={{ color: labelColor }}>{branch.subject}</span>
               <button
                 title={branch.isDeletable ? "Delete Branch" : "Core branches cannot be deleted"}
                 disabled={!branch.isDeletable}
-                className="p-1 text-gray-400 hover:text-pink-500 hover:bg-pink-900/30 rounded disabled:opacity-30 disabled:hover:bg-transparent transition-colors"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  e.preventDefault();
-                  if (branch.isDeletable) {
-                    setHoveredPopup(null); // Unmount Tooltip first before destroying the underlying data!
-                    setTimeout(() => onRemove?.(branch.id), 0); // Allow tooltip to unmount, then execute structural break.
-                  }
-                }}
+                className="radar-delete-button p-1 text-gray-400 hover:text-pink-500 hover:bg-pink-900/30 rounded disabled:opacity-30 disabled:hover:bg-transparent transition-colors"
+                style={{ zIndex: 100000, position: 'relative' }}
+                data-branch-id={branch.id}
               >
                 <Trash2 size={12} />
               </button>
@@ -163,6 +158,37 @@ export const RadarVisualizer: React.FC<RadarVisualizerProps> = ({
       setPan({ x: 0, y: 0 });
     }
   }, [recenterTrigger]);
+
+  // Global Event Listener Bypass for SVG Synthetic Bug Interception
+  useEffect(() => {
+    const handleGlobalInteraction = (e: MouseEvent | TouchEvent) => {
+      const target = e.target as HTMLElement;
+      const deleteBtn = target.closest('.radar-delete-button') as HTMLElement | null;
+      
+      if (deleteBtn) {
+        // We caught a physical click on the trash button!
+        e.preventDefault();
+        e.stopPropagation();
+
+        const branchId = deleteBtn.getAttribute('data-branch-id');
+        if (branchId) {
+          console.log('Suppression lancée pour la branche:', branchId);
+          setIsDragging(false); // Disable map panning
+          setHoveredPopup(null); // Clear tooltip
+          setTimeout(() => onRemove?.(branchId), 0); // Destroy branch
+        }
+      }
+    };
+
+    // Use capture phase to seize the event before the SVG or Recharts Canvas eats it
+    window.addEventListener('mousedown', handleGlobalInteraction, { capture: true });
+    window.addEventListener('touchstart', handleGlobalInteraction, { capture: true });
+
+    return () => {
+      window.removeEventListener('mousedown', handleGlobalInteraction, { capture: true });
+      window.removeEventListener('touchstart', handleGlobalInteraction, { capture: true });
+    };
+  }, [onRemove]);
 
   // Safe clearance of hovered popups if the branch is deleted while hovered
   useEffect(() => {

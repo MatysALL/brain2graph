@@ -63,7 +63,8 @@ body {
   
   .neon-button:hover:not(:disabled) {
     @apply bg-[rgba(0,240,255,0.05)] shadow-[0_0_15px_rgba(0,240,255,0.4)];
-    transform: scale(1.02);
+    transform: scale(1.05);
+    transition: all 0.3s ease;
   }
 
   .neon-button:disabled {
