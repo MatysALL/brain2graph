@@ -109,26 +109,8 @@ export default function Home() {
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col xl:flex-row overflow-hidden relative">
 
-        {/* Visualizer Panel - Left Side */}
-        <section className="flex-1 min-h-[50vh] xl:h-full relative z-0 flex flex-col bg-black/20">
-          <div className="absolute top-4 left-6 z-10 pointer-events-none">
-            <h1 className="text-4xl font-black italic tracking-tighter text-white uppercase neon-text-cyan flex items-center justify-between drop-shadow-[0_0_15px_rgba(0,240,255,0.4)]">
-              <div>
-                Radar<span className="text-pink-500 neon-text-pink">Gen</span>
-              </div>
-            </h1>
-            <p className="text-gray-400 font-mono text-xs mt-1">SYS.VER // v2.1.0-SPA</p>
-          </div>
-          <RadarVisualizer
-            branches={branches}
-            settings={settings}
-            onLabelClick={handleLabelClick}
-            onRemove={handleBranchRemove}
-          />
-        </section>
-
-        {/* Configuration Panel - Right Side */}
-        <section className="w-full xl:w-[450px] shrink-0 border-l border-white/10 bg-[var(--color-panel)] flex flex-col relative z-10 shadow-[-10px_0_30px_rgba(0,0,0,0.5)]">
+        {/* Configuration Panel - Left Side */}
+        <section className="w-full xl:w-[450px] shrink-0 border-r border-white/10 bg-[var(--color-panel)] flex flex-col relative z-20 shadow-[10px_0_30px_rgba(0,0,0,0.5)]">
           <div className="flex-1 h-full p-6 pb-0 overflow-y-auto custom-scrollbar">
             <BranchConfigurator
               branches={branches}
@@ -138,6 +120,24 @@ export default function Home() {
               onReorder={handleBranchReorder}
             />
           </div>
+        </section>
+
+        {/* Visualizer Panel - Right Side */}
+        <section className="flex-1 min-h-[50vh] xl:h-full relative z-0 flex flex-col bg-black/20">
+          <div className="absolute top-4 right-6 z-10 pointer-events-none text-right">
+            <h1 className="text-4xl font-black italic tracking-tighter text-white uppercase neon-text-cyan flex items-center justify-end drop-shadow-[0_0_15px_rgba(0,240,255,0.4)]">
+              <div>
+                Radar<span className="text-pink-500 neon-text-pink">Gen</span>
+              </div>
+            </h1>
+            <p className="text-gray-400 font-mono text-xs mt-1">SYS.VER // v3.0.0-SPA</p>
+          </div>
+          <RadarVisualizer
+            branches={branches}
+            settings={settings}
+            onLabelClick={handleLabelClick}
+            onRemove={handleBranchRemove}
+          />
         </section>
       </div>
 

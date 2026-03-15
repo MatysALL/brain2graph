@@ -189,7 +189,7 @@ export const RadarVisualizer: React.FC<RadarVisualizerProps> = ({
           <PolarRadiusAxis
             angle={90}
             domain={[0, 100]}
-            tick={settings.showThresholds ? { fill: 'rgba(255,255,255,0.3)', fontSize: 10 } : false}
+            tick={false}
             tickCount={5} // 0, 25, 50, 75, 100
             axisLine={false}
           />
