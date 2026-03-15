@@ -1,6 +1,20 @@
 import React from 'react';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent
+} from '@dnd-kit/core';
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy
+} from '@dnd-kit/sortable';
 import { BranchData } from '../types';
-import { BranchItem } from './BranchItem';
+import { SortableBranchItem } from './SortableBranchItem';
 import { Plus } from 'lucide-react';
 
 interface BranchConfiguratorProps {
@@ -8,42 +22,68 @@ interface BranchConfiguratorProps {
   onChange: (id: string, updates: Partial<BranchData>) => void;
   onRemove: (id: string) => void;
   onAdd: () => void;
+  onReorder: (activeId: string, overId: string) => void;
 }
 
-export const BranchConfigurator: React.FC<BranchConfiguratorProps> = ({ 
-  branches, 
-  onChange, 
-  onRemove, 
-  onAdd 
+export const BranchConfigurator: React.FC<BranchConfiguratorProps> = ({
+  branches,
+  onChange,
+  onRemove,
+  onAdd,
+  onReorder
 }) => {
-  // Check if we can add a new branch: all current branches must have a name
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (over && active.id !== over.id) {
+      onReorder(active.id as string, over.id as string);
+    }
+  };
+
   const canAddBranch = branches.every(b => b.name.trim().length > 0);
 
   return (
-    <div className="flex flex-col h-full max-h-[calc(100vh-2rem)] overflow-y-auto pr-2 custom-scrollbar">
-      <div className="mb-6">
+    <div className="flex flex-col h-full max-h-[calc(100vh-2rem)] overflow-hidden">
+      <div className="mb-6 flex-shrink-0">
         <h2 className="text-2xl font-bold neon-text-cyan flex items-center gap-2 mb-2">
           <div className="w-2 h-6 bg-cyan-400 rounded-sm"></div>
           Configuration
         </h2>
         <p className="text-gray-400 text-sm">
-          Define your radar chart branches below. The first 3 branches map out the core shape and cannot be deleted.
+          Drag handles to reorder branches. Click an item to expand settings.
         </p>
       </div>
 
-      <div className="flex-1">
-        {branches.map((branch, idx) => (
-          <BranchItem 
-            key={branch.id} 
-            index={idx}
-            branch={branch} 
-            onChange={onChange} 
-            onRemove={onRemove} 
-          />
-        ))}
+      <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+        >
+          <SortableContext
+            items={branches.map(b => b.id)}
+            strategy={verticalListSortingStrategy}
+          >
+            {branches.map((branch, idx) => (
+              <SortableBranchItem
+                key={branch.id}
+                index={idx}
+                branch={branch}
+                onChange={onChange}
+                onRemove={onRemove}
+              />
+            ))}
+          </SortableContext>
+        </DndContext>
       </div>
 
-      <div className="mt-4 pt-4 border-t border-white/10 sticky bottom-0 bg-[var(--background)] pb-4">
+      <div className="mt-4 pt-4 border-t border-white/10 flex-shrink-0 bg-[var(--background)] pb-4">
         <button
           onClick={onAdd}
           disabled={!canAddBranch}

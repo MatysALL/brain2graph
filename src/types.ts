@@ -1,3 +1,11 @@
+export type ColorMode = 'default' | 'multi' | 'custom';
+
+export interface DisplaySettings {
+  showThresholds: boolean;
+  colorMode: ColorMode;
+  customColor: string;
+}
+
 export interface BranchData {
   id: string;
   name: string;
@@ -6,4 +14,10 @@ export interface BranchData {
   value: number;
   color: string;
   isDeletable?: boolean;
+}
+
+export interface ConfigurationData {
+  version: string;
+  branches: BranchData[];
+  displaySettings: DisplaySettings;
 }
