@@ -81,7 +81,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
             <div className="flex items-center gap-2">
                 <div className="flex items-center gap-2 px-3 py-2 bg-black/40 rounded-lg border border-white/5">
                     <Settings2 size={16} className="text-gray-400" />
-                    <span className="text-xs font-mono text-gray-400 mr-2 uppercase">Display Options</span>
+                    <span className="text-xs font-mono text-gray-400 mr-2 uppercase">Options du Graphe</span>
 
                     {/* Thresholds Toggle */}
                     <button
@@ -92,10 +92,10 @@ export const Toolbar: React.FC<ToolbarProps> = ({
                                 ? "bg-cyan-500/20 text-cyan-400 border border-cyan-500/50"
                                 : "bg-white/5 text-gray-500 border border-white/10 hover:bg-white/10"
                         )}
-                        title="Toggle Guide Rings / Thresholds"
+                        title="Afficher les valeurs"
                     >
                         <Target size={14} />
-                        Guides {settings.showThresholds ? 'ON' : 'OFF'}
+                        Valeurs {settings.showThresholds ? 'ON' : 'OFF'}
                     </button>
 
                     {/* Color Mode Toggle */}
@@ -103,7 +103,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
                         <button
                             onClick={cycleColorMode}
                             className="px-3 py-1 text-xs rounded transition-all bg-white/5 text-gray-300 border border-white/10 hover:bg-white/10 flex items-center gap-1.5 min-w-[120px]"
-                            title="Cycle Color Modes"
+                            title="Modes d'affichage des couleurs"
                         >
                             <Palette size={14} className={
                                 settings.colorMode === 'multi' ? 'text-pink-400' :
@@ -138,10 +138,10 @@ export const Toolbar: React.FC<ToolbarProps> = ({
                 <button
                     onClick={onRecenter}
                     className="flex items-center gap-2 px-4 py-2 text-sm text-pink-400 bg-pink-900/30 border border-pink-500/50 rounded-lg hover:bg-pink-900/50 transition-all font-semibold shadow-[0_0_10px_rgba(255,0,127,0.2)]"
-                    title="Recalibrate and Center View"
+                    title="Recentrer la vue"
                 >
                     <Target size={16} />
-                    <span className="hidden sm:inline">Recalibrate View</span>
+                    <span className="hidden sm:inline">Rencentrer</span>
                 </button>
                 <div className="w-px h-6 bg-white/10 mx-1"></div>
                 <button

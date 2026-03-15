@@ -11,9 +11,9 @@ import { arrayMove } from '@dnd-kit/sortable';
 const generateId = () => Math.random().toString(36).substring(2, 9);
 
 const DEFAULT_BRANCHES: BranchData[] = [
-  { id: generateId(), name: 'Intelligence', min: 0, max: 100, value: 75, color: '#00f0ff', isDeletable: false },
-  { id: generateId(), name: 'Strength', min: 0, max: 100, value: 40, color: '#ff007f', isDeletable: false },
-  { id: generateId(), name: 'Agility', min: 0, max: 100, value: 85, color: '#b026ff', isDeletable: false },
+  { id: generateId(), name: 'Attaque', min: 0, max: 100, value: 50, color: '#ffffff', isDeletable: false },
+  { id: generateId(), name: 'Défense', min: 0, max: 100, value: 50, color: '#ffffff', isDeletable: false },
+  { id: generateId(), name: 'PV', min: 0, max: 100, value: 50, color: '#ffffff', isDeletable: false },
 ];
 
 const DEFAULT_SETTINGS: DisplaySettings = {
@@ -129,10 +129,10 @@ export default function Home() {
           <div className="absolute top-4 right-6 z-10 pointer-events-none text-right">
             <h1 className="text-4xl font-black italic tracking-tighter text-white uppercase neon-text-cyan flex items-center justify-end drop-shadow-[0_0_15px_rgba(0,240,255,0.4)]">
               <div>
-                Radar<span className="text-pink-500 neon-text-pink">Gen</span>
+                Brain<span className="text-pink-500 neon-text-pink">2</span>Graph
               </div>
             </h1>
-            <p className="text-gray-400 font-mono text-xs mt-1">SYS.VER // v3.0.0-SPA</p>
+            <p className="text-gray-400 font-mono text-xs mt-1">SYS.VER // v1.0.1-SPA // MatysALL</p>
           </div>
           <ErrorBoundary>
             <RadarVisualizer

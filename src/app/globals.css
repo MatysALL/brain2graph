@@ -9,7 +9,7 @@
   --color-brand-cyan: #00f0ff;
   --color-brand-purple: #b026ff;
   --color-brand-pink: #ff007f;
-  
+
   /* UI Colors */
   --color-panel: rgba(20, 20, 35, 0.6);
   --color-panel-border: rgba(255, 255, 255, 0.1);
@@ -27,7 +27,7 @@ body {
   background-color: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), sans-serif;
-  background-image: 
+  background-image:
     radial-gradient(circle at 15% 50%, rgba(0, 240, 255, 0.08) 0%, transparent 50%),
     radial-gradient(circle at 85% 30%, rgba(176, 38, 255, 0.08) 0%, transparent 50%);
   background-attachment: fixed;
@@ -39,15 +39,15 @@ body {
   .glass-panel {
     @apply bg-[var(--color-panel)] backdrop-blur-md border border-[var(--color-panel-border)] shadow-lg rounded-xl;
   }
-  
+
   .glass-input {
     @apply bg-black/40 border border-white/10 rounded-md px-3 py-2 text-sm text-foreground focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition-all;
   }
-  
+
   .neon-text-cyan {
     text-shadow: 0 0 10px rgba(0, 240, 255, 0.7);
   }
-  
+
   .neon-text-pink {
     text-shadow: 0 0 10px rgba(255, 0, 127, 0.7);
   }
@@ -55,14 +55,14 @@ body {
   .neon-border-glow {
     box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
   }
-  
+
   .neon-button {
     @apply relative bg-transparent border border-cyan-400 text-cyan-400 font-semibold py-2 px-4 rounded transition-all duration-300;
     overflow: hidden !important;
   }
-  
+
   .neon-button:hover:not(:disabled) {
-    @apply bg-[rgba(0,240,255,0.05)] shadow-[0_0_15px_rgba(0,240,255,0.4)];
+    @apply bg-[rgba(0, 240, 255, 0.05)] shadow-[0_0_15px_rgba(0, 240, 255, 0.4)];
     transform: scale(1.05);
     transition: all 0.3s ease;
   }

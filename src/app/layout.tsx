@@ -8,8 +8,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Radar Chart Generator",
-  description: "A futuristic single-page application for dynamic radar charts.",
+  title: "Brain2Graph",
+  description: "Une application one-page pour la gestion des graphes radar en temps réel.",
 };
 
 export default function RootLayout({
@@ -18,7 +18,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="fr" className="dark">
       <body
         className={`${inter.variable} antialiased`}
       >

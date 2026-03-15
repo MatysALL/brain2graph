@@ -39,10 +39,10 @@ export class ErrorBoundary extends Component<Props, State> {
             </div>
             <h2 className="text-xl font-bold text-white neon-text-pink">Graphic Engine Exception</h2>
             <p className="text-sm text-gray-400">
-              The visualization engine encountered a fatal error during rendering, likely due to a state conflict during rapid data mutation.
+              Impossible de visualiser le graphique.
             </p>
             <div className="p-3 bg-black/50 rounded text-xs font-mono text-pink-400 border border-pink-500/20 w-full text-left overflow-x-auto">
-              {this.state.error?.message || "Unknown rendering exception"}
+              {this.state.error?.message || "Erreur inconnue"}
             </div>
             <button
               onClick={this.handleReset}

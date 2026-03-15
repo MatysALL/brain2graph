@@ -19,7 +19,7 @@ interface BranchItemProps {
 export const BranchItem: React.FC<BranchItemProps> = ({ branch, onChange, onRemove, index }) => {
   const [showColorPicker, setShowColorPicker] = useState(false);
   const colorPickerRef = useRef<HTMLDivElement>(null);
-  
+
   // Local state for visually fast response, without triggering global rerenders
   const [tempColor, setTempColor] = useState(branch.color);
 
@@ -50,13 +50,13 @@ export const BranchItem: React.FC<BranchItemProps> = ({ branch, onChange, onRemo
           <div className="w-6 h-6 rounded-full flex items-center justify-center bg-white/5 text-xs text-cyan-400 font-bold border border-cyan-400/30">
             {index + 1}
           </div>
-          <h3 className="font-semibold text-gray-200">Branch</h3>
+          <h3 className="font-semibold text-gray-200">Branche</h3>
         </div>
-        <button 
+        <button
           onClick={() => onRemove(branch.id)}
           disabled={!branch.isDeletable}
           className="text-gray-400 hover:text-pink-500 disabled:opacity-30 disabled:hover:text-gray-400 transition-colors"
-          title={!branch.isDeletable ? "Core branches cannot be removed" : "Remove branch"}
+          title={!branch.isDeletable ? "La branche ne peut pas être supprimée" : "Supprimer"}
         >
           <Trash2 size={18} />
         </button>
@@ -66,11 +66,11 @@ export const BranchItem: React.FC<BranchItemProps> = ({ branch, onChange, onRemo
         {/* Name Input */}
         <div className="flex flex-col gap-1 md:col-span-2">
           <label className="text-xs text-gray-400 uppercase tracking-wider">Name</label>
-          <input 
-            type="text" 
+          <input
+            type="text"
             value={branch.name}
             onChange={(e) => onChange(branch.id, { name: e.target.value })}
-            placeholder="e.g., Intelligence"
+            placeholder="ex, Intelligence"
             className={cn("glass-input w-full", !branch.name && "border-pink-500/50 focus:border-pink-500 ring-pink-500/20")}
           />
         </div>
@@ -79,8 +79,8 @@ export const BranchItem: React.FC<BranchItemProps> = ({ branch, onChange, onRemo
         <div className="flex flex-col gap-1">
           <label className="text-xs text-gray-400 uppercase tracking-wider">Value</label>
           <div className="flex items-center gap-2">
-            <input 
-              type="number" 
+            <input
+              type="number"
               value={branch.value}
               onChange={(e) => onChange(branch.id, { value: Number(e.target.value) })}
               className="glass-input w-full"
@@ -92,16 +92,16 @@ export const BranchItem: React.FC<BranchItemProps> = ({ branch, onChange, onRemo
         <div className="flex flex-col gap-1">
           <label className="text-xs text-gray-400 uppercase tracking-wider">Min / Max</label>
           <div className="flex items-center gap-2">
-            <input 
-              type="number" 
+            <input
+              type="number"
               value={branch.min}
               onChange={(e) => onChange(branch.id, { min: Number(e.target.value) })}
               className="glass-input w-1/2"
               placeholder="Min"
             />
             <span className="text-gray-500">/</span>
-            <input 
-              type="number" 
+            <input
+              type="number"
               value={branch.max}
               onChange={(e) => onChange(branch.id, { max: Number(e.target.value) })}
               className="glass-input w-1/2"
@@ -114,12 +114,12 @@ export const BranchItem: React.FC<BranchItemProps> = ({ branch, onChange, onRemo
         <div className="flex flex-col gap-1 md:col-span-2">
           <label className="text-xs text-gray-400 uppercase tracking-wider">Chart Color Accent</label>
           <div className="relative" ref={colorPickerRef}>
-            <button 
+            <button
               onClick={() => setShowColorPicker(!showColorPicker)}
               className="glass-input w-full flex items-center justify-between"
             >
               <div className="flex items-center gap-2">
-                <div 
+                <div
                   className="w-5 h-5 rounded-full border border-white/20 shadow-sm transition-colors duration-100"
                   style={{ backgroundColor: tempColor }}
                 />
@@ -127,16 +127,16 @@ export const BranchItem: React.FC<BranchItemProps> = ({ branch, onChange, onRemo
               </div>
               <ChevronDown size={16} className="text-gray-400" />
             </button>
-            
+
             {showColorPicker && (
-              <div 
+              <div
                 className="absolute top-full left-0 mt-2 z-50 glass-panel p-3"
                 onMouseUp={commitColor}
                 onTouchEnd={commitColor}
               >
-                <HexColorPicker 
-                  color={tempColor} 
-                  onChange={setTempColor} 
+                <HexColorPicker
+                  color={tempColor}
+                  onChange={setTempColor}
                 />
               </div>
             )}

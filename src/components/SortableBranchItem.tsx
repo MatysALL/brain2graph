@@ -104,7 +104,7 @@ export const SortableBranchItem: React.FC<SortableBranchItemProps> = ({
                     onClick={() => onRemove(branch.id)}
                     disabled={!branch.isDeletable}
                     className="text-gray-400 hover:text-pink-500 disabled:opacity-30 disabled:hover:text-gray-400 transition-colors"
-                    title={!branch.isDeletable ? "Core branches cannot be removed" : "Remove branch"}
+                    title={!branch.isDeletable ? "La branche ne peut pas être supprimée" : "Supprimer"}
                 >
                     <Trash2 size={18} />
                 </button>
@@ -117,12 +117,12 @@ export const SortableBranchItem: React.FC<SortableBranchItemProps> = ({
             )}>
                 {/* Name Input */}
                 <div className="flex flex-col gap-1 md:col-span-2">
-                    <label className="text-xs text-gray-400 uppercase tracking-wider">Name</label>
+                    <label className="text-xs text-gray-400 uppercase tracking-wider">Nom</label>
                     <input
                         type="text"
                         value={branch.name}
                         onChange={(e) => onChange(branch.id, { name: e.target.value })}
-                        placeholder="e.g., Intelligence"
+                        placeholder="ex, Intelligence"
                         className={cn("glass-input w-full", !branch.name && "border-pink-500/50 focus:border-pink-500 ring-pink-500/20")}
                     />
                 </div>
@@ -130,7 +130,7 @@ export const SortableBranchItem: React.FC<SortableBranchItemProps> = ({
                 {/* Value, Min, Max - Inline */}
                 <div className="flex flex-row items-center gap-3 w-full md:col-span-2">
                     <div className="flex flex-col gap-1 w-1/3">
-                        <label className="text-xs text-cyan-400 uppercase tracking-wider font-bold">Value</label>
+                        <label className="text-xs text-cyan-400 uppercase tracking-wider font-bold">Valeur</label>
                         <input
                             type="number"
                             value={branch.value}
@@ -165,7 +165,7 @@ export const SortableBranchItem: React.FC<SortableBranchItemProps> = ({
                         value={branch.description || ''}
                         onChange={(e) => onChange(branch.id, { description: e.target.value })}
                         maxLength={500}
-                        placeholder="Add details about this metric..."
+                        placeholder="Ajoutez une description pour cette branche..."
                         className="glass-input w-full min-h-[60px] resize-y custom-scrollbar"
                     />
                     <div className="text-[10px] text-gray-500 text-right">
@@ -175,7 +175,7 @@ export const SortableBranchItem: React.FC<SortableBranchItemProps> = ({
 
                 {/* Color Picker Toggle */}
                 <div className="flex flex-col gap-1 md:col-span-2">
-                    <label className="text-xs text-gray-400 uppercase tracking-wider">Chart Color Accent</label>
+                    <label className="text-xs text-gray-400 uppercase tracking-wider">Couleur</label>
                     <div className="relative" ref={colorPickerRef}>
                         <button
                             onClick={() => setShowColorPicker(!showColorPicker)}
@@ -192,7 +192,7 @@ export const SortableBranchItem: React.FC<SortableBranchItemProps> = ({
                         </button>
 
                         {showColorPicker && (
-                            <div 
+                            <div
                                 className="absolute top-full left-0 mt-2 z-50 glass-panel p-3"
                                 onMouseUp={commitColor}
                                 onTouchEnd={commitColor}

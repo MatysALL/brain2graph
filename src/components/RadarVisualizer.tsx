@@ -47,7 +47,7 @@ const renderCustomTick = (props: any) => {
   const radiusRange = props.radius || 150; // Approximated fallback if radius missing
 
   return (
-    <g 
+    <g
       onMouseEnter={() => setHoveredPopup(branch.id)}
       onMouseLeave={() => setHoveredPopup(null)}
     >
@@ -59,9 +59,9 @@ const renderCustomTick = (props: any) => {
         const tickRadius = (pct / 100) * radiusRange;
         const tickX = cx + tickRadius * Math.cos(angle);
         const tickY = cy + tickRadius * Math.sin(angle);
-        
+
         const realValue = branch.min + (branch.max - branch.min) * (pct / 100);
-        
+
         return (
           <text
             key={`${branch.id}-tick-${pct}`}
@@ -77,10 +77,10 @@ const renderCustomTick = (props: any) => {
           </text>
         );
       })}
-      
+
       {/* Base Zero Tick */}
       {settings.showThresholds && (
-         <text x={cx} y={cy} dy={4} fill="rgba(255,255,255,0.3)" fontSize="10" textAnchor="middle" className="pointer-events-none select-none">{branch.min}</text>
+        <text x={cx} y={cy} dy={4} fill="rgba(255,255,255,0.3)" fontSize="10" textAnchor="middle" className="pointer-events-none select-none">{branch.min}</text>
       )}
 
       {/* Primary Axis Label */}
@@ -101,11 +101,11 @@ const renderCustomTick = (props: any) => {
 
       {/* Floating Hover Tooltip rendered inside a foreignObject */}
       {isPopupActive && (
-        <foreignObject 
-          x={hoverX - 75} 
-          y={hoverY} 
-          width="150" 
-          height="120" 
+        <foreignObject
+          x={hoverX - 75}
+          y={hoverY}
+          width="150"
+          height="120"
           className="overflow-visible"
           style={{ pointerEvents: 'all', zIndex: 9999 }}
         >
@@ -125,7 +125,7 @@ const renderCustomTick = (props: any) => {
                 <Trash2 size={12} />
               </button>
             </div>
-            
+
             <p className="text-[10px] text-gray-300 font-mono leading-relaxed line-clamp-4 break-words custom-scrollbar overflow-y-auto max-h-[60px]">
               {branch.description || <span className="text-gray-600 italic">No description provided.</span>}
             </p>
@@ -150,7 +150,7 @@ export const RadarVisualizer: React.FC<RadarVisualizerProps> = ({
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [startDragPos, setStartDragPos] = useState({ x: 0, y: 0 });
-  
+
   // Recenter trigger
   useEffect(() => {
     if (recenterTrigger && recenterTrigger > 0) {
@@ -164,7 +164,7 @@ export const RadarVisualizer: React.FC<RadarVisualizerProps> = ({
     const handleGlobalInteraction = (e: MouseEvent | TouchEvent) => {
       const target = e.target as HTMLElement;
       const deleteBtn = target.closest('.radar-delete-button') as HTMLElement | null;
-      
+
       if (deleteBtn) {
         // We caught a physical click on the trash button!
         e.preventDefault();
@@ -270,14 +270,14 @@ export const RadarVisualizer: React.FC<RadarVisualizerProps> = ({
           const nextPoint = points[nextIndex];
           const branchData = chartData[index];
           const nextBranchData = chartData[nextIndex];
-          
+
           if (!branchData || !nextBranchData) return null; // Safe rendering fallback if deleting exactly during frame tick
 
           // Determine specific slice perimeter color
           const pathData = `M ${cx},${cy} L ${point.x},${point.y} L ${nextPoint.x},${nextPoint.y} Z`;
           let sliceStrokeContent = <line x1={point.x} y1={point.y} x2={nextPoint.x} y2={nextPoint.y} stroke={primaryColor} strokeWidth={3} className="transition-all duration-500 pointer-events-none" />;
           let dotColor = primaryColor;
-          
+
           if (settings.colorMode === 'multi') {
             const gradId = `gradient-${index}-${nextIndex}`;
             sliceStrokeContent = (
@@ -318,11 +318,11 @@ export const RadarVisualizer: React.FC<RadarVisualizerProps> = ({
   const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     // Determine zoom direction
     const zoomDelta = e.deltaY < 0 ? 0.1 : -0.1;
     let newScale = scale + zoomDelta;
-    
+
     // constrain scaling limits
     newScale = Math.max(0.3, Math.min(newScale, 3));
     setScale(newScale);
@@ -330,7 +330,7 @@ export const RadarVisualizer: React.FC<RadarVisualizerProps> = ({
 
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
     // Only capture primary click for panning
-    if (e.button !== 0) return; 
+    if (e.button !== 0) return;
     setIsDragging(true);
     setStartDragPos({ x: e.clientX - pan.x, y: e.clientY - pan.y });
   };
@@ -348,7 +348,7 @@ export const RadarVisualizer: React.FC<RadarVisualizerProps> = ({
   };
 
   return (
-    <div 
+    <div
       className={`w-full h-full min-h-[400px] flex items-center justify-center relative p-2 md:p-8 glass-panel overflow-hidden ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
       onWheel={handleWheel}
       onMouseDown={handleMouseDown}
@@ -365,7 +365,7 @@ export const RadarVisualizer: React.FC<RadarVisualizerProps> = ({
       )}
 
       {/* Spatial wrapper allowing Canvas panning/zooming */}
-      <div 
+      <div
         className="w-full h-full flex items-center justify-center transition-transform duration-75 origin-center"
         style={{ transform: `translate(${pan.x}px, ${pan.y}px) scale(${scale})` }}
       >
@@ -377,37 +377,37 @@ export const RadarVisualizer: React.FC<RadarVisualizerProps> = ({
             data={chartData}
             className="overflow-visible" // Ensure pointer-events aren't blocked globally so CustomTicks can hover!
           >
-          <PolarGrid
-            stroke="rgba(255, 255, 255, 0.15)"
-          />
+            <PolarGrid
+              stroke="rgba(255, 255, 255, 0.15)"
+            />
 
-          <PolarAngleAxis
-            dataKey="subject"
-            tick={(props: any) => renderCustomTick({
-              ...props,
-              chartData,
-              settings,
-              hoveredPopup,
-              setHoveredPopup,
-              onRemove
-            })}
-          />
+            <PolarAngleAxis
+              dataKey="subject"
+              tick={(props: any) => renderCustomTick({
+                ...props,
+                chartData,
+                settings,
+                hoveredPopup,
+                setHoveredPopup,
+                onRemove
+              })}
+            />
 
-          <PolarRadiusAxis
-            angle={90}
-            domain={[0, 100]}
-            tick={false}
-            tickCount={5} // 0, 25, 50, 75, 100
-            axisLine={false}
-          />
+            <PolarRadiusAxis
+              angle={90}
+              domain={[0, 100]}
+              tick={false}
+              tickCount={5} // 0, 25, 50, 75, 100
+              axisLine={false}
+            />
 
-          <Radar
-            name="Radar"
-            dataKey="normalizedValue"
-            shape={renderCustomRadarShape}
-          />
-        </RadarChart>
-      </ResponsiveContainer>
+            <Radar
+              name="Radar"
+              dataKey="normalizedValue"
+              shape={renderCustomRadarShape}
+            />
+          </RadarChart>
+        </ResponsiveContainer>
       </div>
     </div>
   );

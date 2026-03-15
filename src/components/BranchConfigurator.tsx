@@ -56,7 +56,7 @@ export const BranchConfigurator: React.FC<BranchConfiguratorProps> = ({
           Configuration
         </h2>
         <p className="text-gray-400 text-sm">
-          Drag handles to reorder branches. Click an item to expand settings.
+          Maintenez une branche et déplacez-la pour en changer l'ordre. Cliquez dessus pour accéder à sa configuration.
         </p>
       </div>
 
@@ -88,18 +88,18 @@ export const BranchConfigurator: React.FC<BranchConfiguratorProps> = ({
           onClick={onAdd}
           disabled={!canAddBranch}
           className="neon-button m-0 p-0"
-          style={{ 
-            backgroundColor: 'transparent', 
-            display: 'block', 
-            width: '100%', 
-            boxSizing: 'border-box', 
+          style={{
+            backgroundColor: 'transparent',
+            display: 'block',
+            width: '100%',
+            boxSizing: 'border-box',
             boxShadow: 'none',
             border: '1px solid rgba(0, 240, 255, 0.4)' // Keep border strictly native, discard local neon bleeding
           }}
         >
           <div className="w-full h-12 flex flex-row items-center justify-center gap-2 pointer-events-none">
             <Plus size={18} />
-            <span>{canAddBranch ? "Add New Branch" : "Name all branches to add a new one"}</span>
+            <span>{canAddBranch ? "Nouvelle branche" : "Donnez un nom aux autres branches pour en ajouter une nouvelle"}</span>
           </div>
         </button>
       </div>
