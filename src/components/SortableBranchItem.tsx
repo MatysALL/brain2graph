@@ -35,7 +35,7 @@ export const SortableBranchItem: React.FC<SortableBranchItemProps> = ({
     const style = {
         transform: CSS.Transform.toString(transform),
         transition,
-        zIndex: isDragging ? 10 : 1,
+        zIndex: showColorPicker ? 100 : (isDragging ? 10 : 1),
     };
 
     // Close color picker when clicking outside
