@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import {
     Download,
     Upload,
@@ -27,6 +27,24 @@ export const Toolbar: React.FC<ToolbarProps> = ({
     onRecenter
 }) => {
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const colorInputRef = useRef<HTMLInputElement>(null);
+
+    // Native Change listener completely immune to React `onChange` spam translation.
+    // Fires exclusively when the color picker menu closes / mouse releases.
+    useEffect(() => {
+        const input = colorInputRef.current;
+        if (!input) return;
+
+        const handleNativeChange = (e: Event) => {
+            const target = e.target as HTMLInputElement;
+            onSettingsChange({ customColor: target.value });
+        };
+
+        input.addEventListener('change', handleNativeChange);
+        return () => {
+            input.removeEventListener('change', handleNativeChange);
+        };
+    }, [settings.colorMode, onSettingsChange]);
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -97,9 +115,9 @@ export const Toolbar: React.FC<ToolbarProps> = ({
                         {/* Custom Color Picker (only shows if custom mode is active) */}
                         {settings.colorMode === 'custom' && (
                             <input
+                                ref={colorInputRef}
                                 type="color"
-                                value={settings.customColor}
-                                onChange={(e) => onSettingsChange({ customColor: e.target.value })}
+                                defaultValue={settings.customColor}
                                 className="w-7 h-7 p-0 border-0 rounded cursor-pointer bg-transparent"
                                 title="Select Custom Glow Color"
                             />

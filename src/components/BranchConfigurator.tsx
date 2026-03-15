@@ -83,14 +83,24 @@ export const BranchConfigurator: React.FC<BranchConfiguratorProps> = ({
         </DndContext>
       </div>
 
-      <div className="mt-4 pt-4 border-t border-white/10 flex-shrink-0 bg-[var(--background)] pb-4 px-1 overflow-hidden rounded-md">
+      <div className="mt-4 pt-4 flex-shrink-0 bg-transparent pb-4 px-1 overflow-hidden rounded-md border-t border-white/10">
         <button
           onClick={onAdd}
           disabled={!canAddBranch}
-          className="neon-button w-full flex flex-row items-center justify-center gap-2 h-12 box-border m-0 p-0"
+          className="neon-button m-0 p-0"
+          style={{ 
+            backgroundColor: 'transparent', 
+            display: 'block', 
+            width: '100%', 
+            boxSizing: 'border-box', 
+            boxShadow: 'none',
+            border: '1px solid rgba(0, 240, 255, 0.4)' // Keep border strictly native, discard local neon bleeding
+          }}
         >
-          <Plus size={18} />
-          <span>{canAddBranch ? "Add New Branch" : "Name all branches to add a new one"}</span>
+          <div className="w-full h-12 flex flex-row items-center justify-center gap-2 pointer-events-none">
+            <Plus size={18} />
+            <span>{canAddBranch ? "Add New Branch" : "Name all branches to add a new one"}</span>
+          </div>
         </button>
       </div>
     </div>

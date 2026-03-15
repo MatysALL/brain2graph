@@ -5,6 +5,7 @@ import { BranchData, DisplaySettings, ConfigurationData } from '@/types';
 import { BranchConfigurator } from '@/components/BranchConfigurator';
 import { RadarVisualizer } from '@/components/RadarVisualizer';
 import { Toolbar } from '@/components/Toolbar';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { arrayMove } from '@dnd-kit/sortable';
 
 const generateId = () => Math.random().toString(36).substring(2, 9);
@@ -133,13 +134,15 @@ export default function Home() {
             </h1>
             <p className="text-gray-400 font-mono text-xs mt-1">SYS.VER // v3.0.0-SPA</p>
           </div>
-          <RadarVisualizer
-            branches={branches}
-            settings={settings}
-            onLabelClick={handleLabelClick}
-            onRemove={handleBranchRemove}
-            recenterTrigger={recenterTrigger}
-          />
+          <ErrorBoundary>
+            <RadarVisualizer
+              branches={branches}
+              settings={settings}
+              onLabelClick={handleLabelClick}
+              onRemove={handleBranchRemove}
+              recenterTrigger={recenterTrigger}
+            />
+          </ErrorBoundary>
         </section>
       </div>
 
