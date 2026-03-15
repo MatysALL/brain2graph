@@ -83,7 +83,7 @@ export const BranchConfigurator: React.FC<BranchConfiguratorProps> = ({
         </DndContext>
       </div>
 
-      <div className="mt-4 pt-4 border-t border-white/10 flex-shrink-0 bg-[var(--background)] pb-4 px-1">
+      <div className="mt-4 pt-4 border-t border-white/10 flex-shrink-0 bg-[var(--background)] pb-4 px-1 overflow-hidden rounded-md">
         <button
           onClick={onAdd}
           disabled={!canAddBranch}

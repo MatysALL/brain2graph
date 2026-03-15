@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect, useRef } from 'react';
 import {
   Radar,
   RadarChart,
@@ -162,6 +162,19 @@ export const RadarVisualizer: React.FC<RadarVisualizerProps> = ({
 }) => {
   const [hoveredPopup, setHoveredPopup] = useState<string | null>(null);
 
+  // Pan and Zoom states
+  const [scale, setScale] = useState(1);
+  const [pan, setPan] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [startDragPos, setStartDragPos] = useState({ x: 0, y: 0 });
+  
+  // Safe clearance of hovered popups if the branch is deleted while hovered
+  useEffect(() => {
+    if (hoveredPopup && !branches.find(b => b.id === hoveredPopup)) {
+      setHoveredPopup(null);
+    }
+  }, [branches, hoveredPopup]);
+
   // Normalize values between 0 and 100 based on their individual min/max
   const chartData = useMemo(() => {
     return branches.map((b) => {
@@ -234,6 +247,9 @@ export const RadarVisualizer: React.FC<RadarVisualizerProps> = ({
           const nextIndex = (index + 1) % points.length;
           const nextPoint = points[nextIndex];
           const branchData = chartData[index];
+          const nextBranchData = chartData[nextIndex];
+          
+          if (!branchData || !nextBranchData) return null; // Safe rendering fallback if deleting exactly during frame tick
 
           // Determine specific slice perimeter color
           const pathData = `M ${cx},${cy} L ${point.x},${point.y} L ${nextPoint.x},${nextPoint.y} Z`;
@@ -247,7 +263,7 @@ export const RadarVisualizer: React.FC<RadarVisualizerProps> = ({
                 <defs>
                   <linearGradient id={`${gradId}-stroke`} x1={point.x} y1={point.y} x2={nextPoint.x} y2={nextPoint.y} gradientUnits="userSpaceOnUse">
                     <stop offset="0%" stopColor={branchData.color} />
-                    <stop offset="100%" stopColor={chartData[nextIndex].color} />
+                    <stop offset="100%" stopColor={nextBranchData.color} />
                   </linearGradient>
                 </defs>
                 <line x1={point.x} y1={point.y} x2={nextPoint.x} y2={nextPoint.y} stroke={`url(#${gradId}-stroke)`} strokeWidth={3} className="transition-all duration-500 pointer-events-none" />
@@ -276,24 +292,69 @@ export const RadarVisualizer: React.FC<RadarVisualizerProps> = ({
     );
   };
 
+  // Interaction handlers for Pan and Zoom
+  const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    // Determine zoom direction
+    const zoomDelta = e.deltaY < 0 ? 0.1 : -0.1;
+    let newScale = scale + zoomDelta;
+    
+    // constrain scaling limits
+    newScale = Math.max(0.3, Math.min(newScale, 3));
+    setScale(newScale);
+  };
+
+  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    // Only capture primary click for panning
+    if (e.button !== 0) return; 
+    setIsDragging(true);
+    setStartDragPos({ x: e.clientX - pan.x, y: e.clientY - pan.y });
+  };
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!isDragging) return;
+    setPan({
+      x: e.clientX - startDragPos.x,
+      y: e.clientY - startDragPos.y
+    });
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
   return (
-    <div className="w-full h-full min-h-[400px] flex items-center justify-center relative p-2 md:p-8 glass-panel overflow-hidden">
+    <div 
+      className={`w-full h-full min-h-[400px] flex items-center justify-center relative p-2 md:p-8 glass-panel overflow-hidden ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
+      onWheel={handleWheel}
+      onMouseDown={handleMouseDown}
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
+      onMouseLeave={handleMouseUp}
+    >
       {/* Background glow base */}
       {settings.colorMode !== 'default' && (
         <div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 h-3/4 blur-[100px] rounded-full point-events-none opacity-20 transition-colors duration-500"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 h-3/4 blur-[100px] rounded-full pointer-events-none opacity-20 transition-colors duration-500"
           style={{ backgroundColor: primaryColor }}
         />
       )}
 
-      <ResponsiveContainer width="100%" height="100%">
-        <RadarChart
-          cx="50%"
-          cy="50%"
-          outerRadius="70%"
-          data={chartData}
-          className="overflow-visible" // Ensure pointer-events aren't blocked globally so CustomTicks can hover!
-        >
+      {/* Spatial wrapper allowing Canvas panning/zooming */}
+      <div 
+        className="w-full h-full flex items-center justify-center transition-transform duration-75 origin-center"
+        style={{ transform: `translate(${pan.x}px, ${pan.y}px) scale(${scale})` }}
+      >
+        <ResponsiveContainer width="100%" height="100%">
+          <RadarChart
+            cx="50%"
+            cy="50%"
+            outerRadius="70%"
+            data={chartData}
+            className="overflow-visible" // Ensure pointer-events aren't blocked globally so CustomTicks can hover!
+          >
           <PolarGrid
             stroke="rgba(255, 255, 255, 0.15)"
           />
@@ -327,6 +388,7 @@ export const RadarVisualizer: React.FC<RadarVisualizerProps> = ({
           <Tooltip content={<CustomTooltip />} wrapperStyle={{ pointerEvents: 'none', zIndex: 100 }} />
         </RadarChart>
       </ResponsiveContainer>
+      </div>
     </div>
   );
 };

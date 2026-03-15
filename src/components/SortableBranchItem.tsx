@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { HexColorPicker } from 'react-colorful';
@@ -22,6 +22,27 @@ export const SortableBranchItem: React.FC<SortableBranchItemProps> = ({
     const [isExpanded, setIsExpanded] = useState(false);
     const [showColorPicker, setShowColorPicker] = useState(false);
     const colorPickerRef = useRef<HTMLDivElement>(null);
+
+    // Local state for debouncing high-frequency color updates
+    const [tempColor, setTempColor] = useState(branch.color);
+    const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+    // Keep temp color perfectly in sync with external resets
+    useEffect(() => {
+        setTempColor(branch.color);
+    }, [branch.color]);
+
+    const handleColorChange = useCallback((newColor: string) => {
+        setTempColor(newColor);
+        
+        if (debounceTimerRef.current) {
+            clearTimeout(debounceTimerRef.current);
+        }
+        
+        debounceTimerRef.current = setTimeout(() => {
+            onChange(branch.id, { color: newColor });
+        }, 200); // Wait 200ms of user inactivity before mutating global graph state
+    }, [branch.id, onChange]);
 
     const {
         attributes,
@@ -171,10 +192,10 @@ export const SortableBranchItem: React.FC<SortableBranchItemProps> = ({
                         >
                             <div className="flex items-center gap-2">
                                 <div
-                                    className="w-5 h-5 rounded-full border border-white/20 shadow-sm"
-                                    style={{ backgroundColor: branch.color }}
+                                    className="w-5 h-5 rounded-full border border-white/20 shadow-sm transition-colors duration-100"
+                                    style={{ backgroundColor: tempColor }}
                                 />
-                                <span className="text-sm font-mono">{branch.color}</span>
+                                <span className="text-sm font-mono">{tempColor}</span>
                             </div>
                             <ChevronDown size={16} className="text-gray-400" />
                         </button>
@@ -182,10 +203,8 @@ export const SortableBranchItem: React.FC<SortableBranchItemProps> = ({
                         {showColorPicker && (
                             <div className="absolute top-full left-0 mt-2 z-50 glass-panel p-3">
                                 <HexColorPicker
-                                    color={branch.color}
-                                    onChange={(color) => {
-                                        onChange(branch.id, { color });
-                                    }}
+                                    color={tempColor}
+                                    onChange={handleColorChange}
                                 />
                             </div>
                         )}
