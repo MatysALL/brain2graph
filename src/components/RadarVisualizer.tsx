@@ -206,45 +206,58 @@ export const RadarVisualizer: React.FC<RadarVisualizerProps> = ({
     const cx = props.cx || 0;
     const cy = props.cy || 0;
 
+    // Generate unified polygon points string for the global fill
+    const polygonPoints = points.map((p: any) => `${p.x},${p.y}`).join(' ');
+
     return (
       <g>
+        {/* Global smooth radial fill (replaces hard triangular edges) */}
+        <defs>
+          <radialGradient id="globalRadialFill" cx="50%" cy="50%" r="50%">
+            {settings.colorMode === 'multi' ? (
+              <>
+                <stop offset="0%" stopColor="rgba(255,255,255,0.1)" />
+                <stop offset="100%" stopColor="rgba(0,0,0,0)" />
+              </>
+            ) : (
+              <>
+                <stop offset="0%" stopColor={primaryColor} stopOpacity={0.4} />
+                <stop offset="100%" stopColor={primaryColor} stopOpacity={0.05} />
+              </>
+            )}
+          </radialGradient>
+        </defs>
+        <polygon points={polygonPoints} fill="url(#globalRadialFill)" stroke="transparent" className="transition-all duration-500 pointer-events-none" />
+
+        {/* Iterate edges to draw Multi-Color linear gradient perimeters */}
         {points.map((point: any, index: number) => {
           const nextIndex = (index + 1) % points.length;
           const nextPoint = points[nextIndex];
           const branchData = chartData[index];
 
-          // Determine specific slice color
+          // Determine specific slice perimeter color
           const pathData = `M ${cx},${cy} L ${point.x},${point.y} L ${nextPoint.x},${nextPoint.y} Z`;
-          let sliceFillContent = <path d={pathData} fill={fillColor} stroke="transparent" className="transition-all duration-500" />;
-          let sliceStrokeContent = <line x1={point.x} y1={point.y} x2={nextPoint.x} y2={nextPoint.y} stroke={primaryColor} strokeWidth={3} />;
+          let sliceStrokeContent = <line x1={point.x} y1={point.y} x2={nextPoint.x} y2={nextPoint.y} stroke={primaryColor} strokeWidth={3} className="transition-all duration-500 pointer-events-none" />;
           let dotColor = primaryColor;
           
           if (settings.colorMode === 'multi') {
             const gradId = `gradient-${index}-${nextIndex}`;
-            sliceFillContent = (
+            sliceStrokeContent = (
               <>
                 <defs>
-                  <linearGradient id={gradId} x1={point.x} y1={point.y} x2={nextPoint.x} y2={nextPoint.y} gradientUnits="userSpaceOnUse">
-                    <stop offset="0%" stopColor={branchData.color} stopOpacity={0.4} />
-                    <stop offset="100%" stopColor={chartData[nextIndex].color} stopOpacity={0.4} />
-                  </linearGradient>
                   <linearGradient id={`${gradId}-stroke`} x1={point.x} y1={point.y} x2={nextPoint.x} y2={nextPoint.y} gradientUnits="userSpaceOnUse">
                     <stop offset="0%" stopColor={branchData.color} />
                     <stop offset="100%" stopColor={chartData[nextIndex].color} />
                   </linearGradient>
                 </defs>
-                <path d={pathData} fill={`url(#${gradId})`} stroke="transparent" className="transition-all duration-500" />
+                <line x1={point.x} y1={point.y} x2={nextPoint.x} y2={nextPoint.y} stroke={`url(#${gradId}-stroke)`} strokeWidth={3} className="transition-all duration-500 pointer-events-none" />
               </>
-            );
-            sliceStrokeContent = (
-              <line x1={point.x} y1={point.y} x2={nextPoint.x} y2={nextPoint.y} stroke={`url(#${gradId}-stroke)`} strokeWidth={3} />
             );
             dotColor = branchData.color;
           }
 
           return (
             <g key={`slice-${index}`}>
-              {sliceFillContent}
               {sliceStrokeContent}
               {/* Draw dot */}
               <circle
@@ -254,6 +267,7 @@ export const RadarVisualizer: React.FC<RadarVisualizerProps> = ({
                 fill={dotColor}
                 stroke="rgba(0,0,0,0.5)"
                 strokeWidth={1}
+                className="pointer-events-none"
               />
             </g>
           );
@@ -278,7 +292,7 @@ export const RadarVisualizer: React.FC<RadarVisualizerProps> = ({
           cy="50%"
           outerRadius="70%"
           data={chartData}
-          className="overflow-visible !pointer-events-none" // Make chart not gobble unhandled mouse events
+          className="overflow-visible" // Ensure pointer-events aren't blocked globally so CustomTicks can hover!
         >
           <PolarGrid
             stroke="rgba(255, 255, 255, 0.15)"

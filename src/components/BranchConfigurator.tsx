@@ -83,14 +83,14 @@ export const BranchConfigurator: React.FC<BranchConfiguratorProps> = ({
         </DndContext>
       </div>
 
-      <div className="mt-4 pt-4 border-t border-white/10 flex-shrink-0 bg-[var(--background)] pb-4">
+      <div className="mt-4 pt-4 border-t border-white/10 flex-shrink-0 bg-[var(--background)] pb-4 px-1">
         <button
           onClick={onAdd}
           disabled={!canAddBranch}
-          className="neon-button w-full flex items-center justify-center gap-2 py-3"
+          className="neon-button w-full flex flex-row items-center justify-center gap-2 h-12 box-border m-0 p-0"
         >
           <Plus size={18} />
-          {canAddBranch ? "Add New Branch" : "Name all branches to add a new one"}
+          <span>{canAddBranch ? "Add New Branch" : "Name all branches to add a new one"}</span>
         </button>
       </div>
     </div>
