@@ -66,11 +66,16 @@ const renderCustomTick = (props: any) => {
       onMouseEnter={() => setHoveredPopup(branch.id)}
       onMouseLeave={() => setHoveredPopup(null)}
     >
+      {/* Invisible bridge to maintain hover state between text and popup */}
+      <circle cx={x} cy={y} r={40} fill="transparent" />
+
       {/* Ticks rendered along this specific axis if Guides are ON */}
       {settings.showThresholds && tickPercents.map((pct) => {
         const tickRadius = (pct / 100) * radiusRange;
         const tickX = cx + tickRadius * Math.cos(angle);
         const tickY = cy + tickRadius * Math.sin(angle);
+        
+        const realValue = branch.min + (branch.max - branch.min) * (pct / 100);
         
         return (
           <text
@@ -83,14 +88,14 @@ const renderCustomTick = (props: any) => {
             dy={4}
             className="pointer-events-none select-none"
           >
-            {pct === 100 ? 'Max' : `${pct}%`}
+            {Number.isInteger(realValue) ? realValue : realValue.toFixed(1)}
           </text>
         );
       })}
       
       {/* Base Zero Tick */}
       {settings.showThresholds && (
-         <text x={cx} y={cy} dy={4} fill="rgba(255,255,255,0.3)" fontSize="10" textAnchor="middle" className="pointer-events-none select-none">Min</text>
+         <text x={cx} y={cy} dy={4} fill="rgba(255,255,255,0.3)" fontSize="10" textAnchor="middle" className="pointer-events-none select-none">{branch.min}</text>
       )}
 
       {/* Primary Axis Label */}
@@ -209,39 +214,44 @@ export const RadarVisualizer: React.FC<RadarVisualizerProps> = ({
           const branchData = chartData[index];
 
           // Determine specific slice color
-          let sliceStroke = primaryColor;
-          let sliceFill = fillColor;
+          const pathData = `M ${cx},${cy} L ${point.x},${point.y} L ${nextPoint.x},${nextPoint.y} Z`;
+          let sliceFillContent = <path d={pathData} fill={fillColor} stroke="transparent" className="transition-all duration-500" />;
+          let sliceStrokeContent = <line x1={point.x} y1={point.y} x2={nextPoint.x} y2={nextPoint.y} stroke={primaryColor} strokeWidth={3} />;
+          let dotColor = primaryColor;
           
           if (settings.colorMode === 'multi') {
-            sliceStroke = branchData.color;
-            sliceFill = `${branchData.color}40`; // 40 hex is ~25% opacity
+            const gradId = `gradient-${index}-${nextIndex}`;
+            sliceFillContent = (
+              <>
+                <defs>
+                  <linearGradient id={gradId} x1={point.x} y1={point.y} x2={nextPoint.x} y2={nextPoint.y} gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stopColor={branchData.color} stopOpacity={0.4} />
+                    <stop offset="100%" stopColor={chartData[nextIndex].color} stopOpacity={0.4} />
+                  </linearGradient>
+                  <linearGradient id={`${gradId}-stroke`} x1={point.x} y1={point.y} x2={nextPoint.x} y2={nextPoint.y} gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stopColor={branchData.color} />
+                    <stop offset="100%" stopColor={chartData[nextIndex].color} />
+                  </linearGradient>
+                </defs>
+                <path d={pathData} fill={`url(#${gradId})`} stroke="transparent" className="transition-all duration-500" />
+              </>
+            );
+            sliceStrokeContent = (
+              <line x1={point.x} y1={point.y} x2={nextPoint.x} y2={nextPoint.y} stroke={`url(#${gradId}-stroke)`} strokeWidth={3} />
+            );
+            dotColor = branchData.color;
           }
-
-          // Create a triangle path from center to current point, to next point, back to center
-          const pathData = `M ${cx},${cy} L ${point.x},${point.y} L ${nextPoint.x},${nextPoint.y} Z`;
 
           return (
             <g key={`slice-${index}`}>
-              <path
-                d={pathData}
-                fill={sliceFill}
-                stroke={settings.colorMode === 'multi' ? 'transparent' : sliceStroke} // Global outline handled below if not multi
-                strokeWidth={0}
-                className="transition-all duration-500"
-              />
-              {/* Draw bounding outer line segment for this slice */}
-              <line 
-                x1={point.x} y1={point.y} 
-                x2={nextPoint.x} y2={nextPoint.y} 
-                stroke={sliceStroke}
-                strokeWidth={3}
-              />
+              {sliceFillContent}
+              {sliceStrokeContent}
               {/* Draw dot */}
               <circle
                 cx={point.x}
                 cy={point.y}
                 r={4}
-                fill={sliceStroke}
+                fill={dotColor}
                 stroke="rgba(0,0,0,0.5)"
                 strokeWidth={1}
               />
@@ -271,7 +281,7 @@ export const RadarVisualizer: React.FC<RadarVisualizerProps> = ({
           className="overflow-visible !pointer-events-none" // Make chart not gobble unhandled mouse events
         >
           <PolarGrid
-            stroke={settings.showThresholds ? "rgba(255, 255, 255, 0.15)" : "transparent"}
+            stroke="rgba(255, 255, 255, 0.15)"
           />
 
           <PolarAngleAxis
