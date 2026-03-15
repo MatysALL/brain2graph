@@ -13,6 +13,7 @@ export interface BranchData {
   max: number;
   value: number;
   color: string;
+  description?: string;
   isDeletable?: boolean;
 }
 

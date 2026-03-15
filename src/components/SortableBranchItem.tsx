@@ -115,38 +115,49 @@ export const SortableBranchItem: React.FC<SortableBranchItemProps> = ({
                     />
                 </div>
 
-                {/* Value Inputs */}
-                <div className="flex flex-col gap-1">
-                    <label className="text-xs text-gray-400 uppercase tracking-wider">Value</label>
-                    <div className="flex items-center gap-2">
+                {/* Value, Min, Max - Inline */}
+                <div className="flex flex-row items-center gap-3 w-full md:col-span-2">
+                    <div className="flex flex-col gap-1 w-1/3">
+                        <label className="text-xs text-cyan-400 uppercase tracking-wider font-bold">Value</label>
                         <input
                             type="number"
                             value={branch.value}
                             onChange={(e) => onChange(branch.id, { value: Number(e.target.value) })}
+                            className="glass-input w-full font-bold text-cyan-400 border-cyan-400/50"
+                        />
+                    </div>
+                    <div className="flex flex-col gap-1 w-1/3">
+                        <label className="text-xs text-gray-400 uppercase tracking-wider">Min</label>
+                        <input
+                            type="number"
+                            value={branch.min}
+                            onChange={(e) => onChange(branch.id, { min: Number(e.target.value) })}
+                            className="glass-input w-full"
+                        />
+                    </div>
+                    <div className="flex flex-col gap-1 w-1/3">
+                        <label className="text-xs text-gray-400 uppercase tracking-wider">Max</label>
+                        <input
+                            type="number"
+                            value={branch.max}
+                            onChange={(e) => onChange(branch.id, { max: Number(e.target.value) })}
                             className="glass-input w-full"
                         />
                     </div>
                 </div>
 
-                {/* Min/Max Inputs */}
-                <div className="flex flex-col gap-1">
-                    <label className="text-xs text-gray-400 uppercase tracking-wider">Min / Max</label>
-                    <div className="flex items-center gap-2">
-                        <input
-                            type="number"
-                            value={branch.min}
-                            onChange={(e) => onChange(branch.id, { min: Number(e.target.value) })}
-                            className="glass-input w-1/2"
-                            placeholder="Min"
-                        />
-                        <span className="text-gray-500">/</span>
-                        <input
-                            type="number"
-                            value={branch.max}
-                            onChange={(e) => onChange(branch.id, { max: Number(e.target.value) })}
-                            className="glass-input w-1/2"
-                            placeholder="Max"
-                        />
+                {/* Description Textarea */}
+                <div className="flex flex-col gap-1 md:col-span-2">
+                    <label className="text-xs text-gray-400 uppercase tracking-wider">Description</label>
+                    <textarea
+                        value={branch.description || ''}
+                        onChange={(e) => onChange(branch.id, { description: e.target.value })}
+                        maxLength={500}
+                        placeholder="Add details about this metric..."
+                        className="glass-input w-full min-h-[60px] resize-y custom-scrollbar"
+                    />
+                    <div className="text-[10px] text-gray-500 text-right">
+                        {(branch.description || '').length} / 500
                     </div>
                 </div>
 
