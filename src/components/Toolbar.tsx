@@ -15,6 +15,7 @@ interface ToolbarProps {
     onSettingsChange: (updates: Partial<DisplaySettings>) => void;
     onImport: (config: ConfigurationData) => void;
     onExport: () => void;
+    onRecenter: () => void;
 }
 
 export const Toolbar: React.FC<ToolbarProps> = ({
@@ -22,7 +23,8 @@ export const Toolbar: React.FC<ToolbarProps> = ({
     branches,
     onSettingsChange,
     onImport,
-    onExport
+    onExport,
+    onRecenter
 }) => {
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -115,6 +117,15 @@ export const Toolbar: React.FC<ToolbarProps> = ({
                     ref={fileInputRef}
                     onChange={handleFileChange}
                 />
+                <button
+                    onClick={onRecenter}
+                    className="flex items-center gap-2 px-4 py-2 text-sm text-pink-400 bg-pink-900/30 border border-pink-500/50 rounded-lg hover:bg-pink-900/50 transition-all font-semibold shadow-[0_0_10px_rgba(255,0,127,0.2)]"
+                    title="Recalibrate and Center View"
+                >
+                    <Target size={16} />
+                    <span className="hidden sm:inline">Recalibrate View</span>
+                </button>
+                <div className="w-px h-6 bg-white/10 mx-1"></div>
                 <button
                     onClick={() => fileInputRef.current?.click()}
                     className="flex items-center gap-2 px-4 py-2 text-sm text-gray-300 bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 transition-colors"

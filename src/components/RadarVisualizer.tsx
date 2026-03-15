@@ -16,6 +16,7 @@ interface RadarVisualizerProps {
   settings: DisplaySettings;
   onLabelClick?: (branchId: string) => void;
   onRemove?: (branchId: string) => void;
+  recenterTrigger?: number;
 }
 
 const CustomTooltip = ({ active, payload, label }: any) => {
@@ -39,9 +40,9 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 // Custom Axis Tick with Hover & Description Support
 const renderCustomTick = (props: any) => {
   const { x, y, payload, chartData, settings, hoveredPopup, setHoveredPopup, onLabelClick, onRemove, cx, cy } = props;
-  const branch = chartData.find((d: any) => d.subject === payload.value);
+  const branch = chartData?.find((d: any) => d.subject === payload.value);
 
-  if (!branch) return null;
+  if (!branch) return null; // Defensive crash prevention if branch was just removed
 
   const isPopupActive = hoveredPopup === branch.id;
 
@@ -134,9 +135,10 @@ const renderCustomTick = (props: any) => {
                 className="p-1 text-gray-400 hover:text-pink-500 hover:bg-pink-900/30 rounded disabled:opacity-30 disabled:hover:bg-transparent transition-colors"
                 onClick={(e) => {
                   e.stopPropagation();
+                  e.preventDefault();
                   if (branch.isDeletable) {
-                    onRemove?.(branch.id);
-                    setHoveredPopup(null);
+                    setHoveredPopup(null); // Unmount Tooltip first before destroying the underlying data!
+                    setTimeout(() => onRemove?.(branch.id), 0); // Allow tooltip to unmount, then execute structural break.
                   }
                 }}
               >
@@ -158,7 +160,8 @@ export const RadarVisualizer: React.FC<RadarVisualizerProps> = ({
   branches,
   settings,
   onLabelClick,
-  onRemove
+  onRemove,
+  recenterTrigger
 }) => {
   const [hoveredPopup, setHoveredPopup] = useState<string | null>(null);
 
@@ -168,6 +171,14 @@ export const RadarVisualizer: React.FC<RadarVisualizerProps> = ({
   const [isDragging, setIsDragging] = useState(false);
   const [startDragPos, setStartDragPos] = useState({ x: 0, y: 0 });
   
+  // Recenter trigger
+  useEffect(() => {
+    if (recenterTrigger && recenterTrigger > 0) {
+      setScale(1);
+      setPan({ x: 0, y: 0 });
+    }
+  }, [recenterTrigger]);
+
   // Safe clearance of hovered popups if the branch is deleted while hovered
   useEffect(() => {
     if (hoveredPopup && !branches.find(b => b.id === hoveredPopup)) {

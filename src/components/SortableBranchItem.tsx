@@ -23,26 +23,17 @@ export const SortableBranchItem: React.FC<SortableBranchItemProps> = ({
     const [showColorPicker, setShowColorPicker] = useState(false);
     const colorPickerRef = useRef<HTMLDivElement>(null);
 
-    // Local state for debouncing high-frequency color updates
+    // Local state for visually fast response, without triggering global rerenders
     const [tempColor, setTempColor] = useState(branch.color);
-    const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
     // Keep temp color perfectly in sync with external resets
     useEffect(() => {
         setTempColor(branch.color);
     }, [branch.color]);
 
-    const handleColorChange = useCallback((newColor: string) => {
-        setTempColor(newColor);
-        
-        if (debounceTimerRef.current) {
-            clearTimeout(debounceTimerRef.current);
-        }
-        
-        debounceTimerRef.current = setTimeout(() => {
-            onChange(branch.id, { color: newColor });
-        }, 200); // Wait 200ms of user inactivity before mutating global graph state
-    }, [branch.id, onChange]);
+    const commitColor = useCallback(() => {
+        onChange(branch.id, { color: tempColor });
+    }, [branch.id, tempColor, onChange]);
 
     const {
         attributes,
@@ -201,10 +192,14 @@ export const SortableBranchItem: React.FC<SortableBranchItemProps> = ({
                         </button>
 
                         {showColorPicker && (
-                            <div className="absolute top-full left-0 mt-2 z-50 glass-panel p-3">
+                            <div 
+                                className="absolute top-full left-0 mt-2 z-50 glass-panel p-3"
+                                onMouseUp={commitColor}
+                                onTouchEnd={commitColor}
+                            >
                                 <HexColorPicker
                                     color={tempColor}
-                                    onChange={handleColorChange}
+                                    onChange={setTempColor}
                                 />
                             </div>
                         )}

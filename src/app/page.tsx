@@ -24,6 +24,7 @@ const DEFAULT_SETTINGS: DisplaySettings = {
 export default function Home() {
   const [branches, setBranches] = useState<BranchData[]>(DEFAULT_BRANCHES);
   const [settings, setSettings] = useState<DisplaySettings>(DEFAULT_SETTINGS);
+  const [recenterTrigger, setRecenterTrigger] = useState(0);
 
   const handleBranchChange = (id: string, updates: Partial<BranchData>) => {
     setBranches(prev =>
@@ -137,6 +138,7 @@ export default function Home() {
             settings={settings}
             onLabelClick={handleLabelClick}
             onRemove={handleBranchRemove}
+            recenterTrigger={recenterTrigger}
           />
         </section>
       </div>
@@ -149,6 +151,7 @@ export default function Home() {
           onSettingsChange={handleSettingsChange}
           onImport={handleImport}
           onExport={handleExport}
+          onRecenter={() => setRecenterTrigger(prev => prev + 1)}
         />
       </div>
 

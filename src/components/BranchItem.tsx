@@ -20,24 +20,17 @@ export const BranchItem: React.FC<BranchItemProps> = ({ branch, onChange, onRemo
   const [showColorPicker, setShowColorPicker] = useState(false);
   const colorPickerRef = useRef<HTMLDivElement>(null);
   
-  // Local state for debouncing
+  // Local state for visually fast response, without triggering global rerenders
   const [tempColor, setTempColor] = useState(branch.color);
-  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Sync tempColor if branch.color changes externally
   useEffect(() => {
     setTempColor(branch.color);
   }, [branch.color]);
 
-  const handleColorChange = useCallback((newColor: string) => {
-    setTempColor(newColor);
-    
-    if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
-    
-    debounceTimerRef.current = setTimeout(() => {
-      onChange(branch.id, { color: newColor });
-    }, 200);
-  }, [branch.id, onChange]);
+  const commitColor = useCallback(() => {
+    onChange(branch.id, { color: tempColor });
+  }, [branch.id, tempColor, onChange]);
 
   // Close color picker when clicking outside
   useEffect(() => {
@@ -136,10 +129,14 @@ export const BranchItem: React.FC<BranchItemProps> = ({ branch, onChange, onRemo
             </button>
             
             {showColorPicker && (
-              <div className="absolute top-full left-0 mt-2 z-50 glass-panel p-3">
+              <div 
+                className="absolute top-full left-0 mt-2 z-50 glass-panel p-3"
+                onMouseUp={commitColor}
+                onTouchEnd={commitColor}
+              >
                 <HexColorPicker 
                   color={tempColor} 
-                  onChange={handleColorChange} 
+                  onChange={setTempColor} 
                 />
               </div>
             )}
