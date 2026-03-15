@@ -19,23 +19,7 @@ interface RadarVisualizerProps {
   recenterTrigger?: number;
 }
 
-const CustomTooltip = ({ active, payload, label }: any) => {
-  if (active && payload && payload.length) {
-    const data = payload[0].payload;
-    return (
-      <div className="glass-panel p-3 border border-gray-700 shadow-xl z-50 relative pointer-events-none">
-        <p className="font-bold text-white mb-1" style={{ color: data.color }}>{label}</p>
-        <p className="text-sm text-gray-300">
-          Value: <span className="font-mono text-white">{data.originalValue}</span>
-        </p>
-        <p className="text-xs text-gray-500">
-          Bounds: [{data.min}, {data.max}]
-        </p>
-      </div>
-    );
-  }
-  return null;
-};
+// Removed Recharts Built-in Tooltip (It intercepted pointer events obscuring the popup wrapper).
 
 // Custom Axis Tick with Hover & Description Support
 const renderCustomTick = (props: any) => {
@@ -122,10 +106,11 @@ const renderCustomTick = (props: any) => {
           y={hoverY} 
           width="150" 
           height="120" 
-          className="overflow-visible z-50 pointer-events-auto"
+          className="overflow-visible"
+          style={{ pointerEvents: 'auto', zIndex: 9999 }}
         >
           <div
-            className="flex flex-col gap-2 bg-black/95 backdrop-blur-xl border border-white/20 rounded-md p-3 shadow-2xl animate-in fade-in duration-100"
+            className="flex flex-col gap-2 bg-black/95 backdrop-blur-xl border border-white/20 rounded-md p-3 shadow-2xl animate-in fade-in duration-100 pointer-events-auto"
           >
             <div className="flex items-center justify-between border-b border-white/10 pb-1">
               <span className="font-bold text-xs" style={{ color: labelColor }}>{branch.subject}</span>
@@ -395,8 +380,6 @@ export const RadarVisualizer: React.FC<RadarVisualizerProps> = ({
             dataKey="normalizedValue"
             shape={renderCustomRadarShape}
           />
-
-          <Tooltip content={<CustomTooltip />} wrapperStyle={{ pointerEvents: 'none', zIndex: 100 }} />
         </RadarChart>
       </ResponsiveContainer>
       </div>
