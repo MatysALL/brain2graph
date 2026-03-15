@@ -40,7 +40,7 @@ export default function Home() {
   const handleBranchAdd = () => {
     const newBranch: BranchData = {
       id: generateId(),
-      name: `Branch ${branches.length + 1}`,
+      name: `Compétence ${branches.length + 1}`,
       min: 0,
       max: 100,
       value: 50,
@@ -132,7 +132,7 @@ export default function Home() {
                 Brain<span className="text-pink-500 neon-text-pink">2</span>Graph
               </div>
             </h1>
-            <p className="text-gray-400 font-mono text-xs mt-1">SYS.VER // v1.0.1-SPA // MatysALL</p>
+            <p className="text-gray-400 font-mono text-xs mt-1">SYS.VER // v1.0.1-SPA // Projet réalisé par MatysALL</p>
           </div>
           <ErrorBoundary>
             <RadarVisualizer

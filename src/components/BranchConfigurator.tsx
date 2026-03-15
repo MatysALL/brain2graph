@@ -56,7 +56,7 @@ export const BranchConfigurator: React.FC<BranchConfiguratorProps> = ({
           Configuration
         </h2>
         <p className="text-gray-400 text-sm">
-          Maintenez une branche et déplacez-la pour en changer l'ordre. Cliquez dessus pour accéder à sa configuration.
+          Maintenez une compétence et déplacez-la pour en changer l'ordre. Cliquez dessus pour accéder à sa configuration.
         </p>
       </div>
 
@@ -99,7 +99,7 @@ export const BranchConfigurator: React.FC<BranchConfiguratorProps> = ({
         >
           <div className="w-full h-12 flex flex-row items-center justify-center gap-2 pointer-events-none">
             <Plus size={18} />
-            <span>{canAddBranch ? "Nouvelle branche" : "Donnez un nom aux autres branches pour en ajouter une nouvelle"}</span>
+            <span>{canAddBranch ? "Ajouter une compétence" : "Donnez un nom aux autres compétences pour en ajouter une nouvelle"}</span>
           </div>
         </button>
       </div>

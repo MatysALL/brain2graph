@@ -57,10 +57,10 @@ export const Toolbar: React.FC<ToolbarProps> = ({
                 if (json.version && json.branches) {
                     onImport(json as ConfigurationData);
                 } else {
-                    alert('Invalid configuration file format.');
+                    alert('Format de fichier de configuration invalide.');
                 }
             } catch (err) {
-                alert('Failed to parse JSON file.');
+                alert('Échec de la lecture du fichier JSON.');
             }
         };
         reader.readAsText(file);
@@ -119,7 +119,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
                                 type="color"
                                 defaultValue={settings.customColor}
                                 className="w-7 h-7 p-0 border-0 rounded cursor-pointer bg-transparent"
-                                title="Select Custom Glow Color"
+                                title="Choisir une couleur personnalisée"
                             />
                         )}
                     </div>
@@ -149,7 +149,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
                     className="flex items-center gap-2 px-4 py-2 text-sm text-gray-300 bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 transition-colors"
                 >
                     <Upload size={16} />
-                    Import JSON
+                    Importer JSON
                 </button>
 
                 <button
@@ -157,7 +157,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
                     className="flex items-center gap-2 px-4 py-2 text-sm text-cyan-400 bg-cyan-900/30 border border-cyan-500/50 rounded-lg hover:bg-cyan-900/50 shadow-[0_0_10px_rgba(0,240,255,0.2)] transition-all"
                 >
                     <Download size={16} />
-                    Export JSON
+                    Exporter JSON
                 </button>
             </div>
         </div>

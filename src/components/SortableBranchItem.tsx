@@ -94,7 +94,7 @@ export const SortableBranchItem: React.FC<SortableBranchItemProps> = ({
                             "font-semibold",
                             branch.name ? "text-gray-200" : "text-gray-500 italic"
                         )}>
-                            {branch.name || "Unnamed Branch"}
+                            {branch.name || "Compétence sans nom"}
                         </h3>
                         {isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
                     </button>
@@ -104,7 +104,7 @@ export const SortableBranchItem: React.FC<SortableBranchItemProps> = ({
                     onClick={() => onRemove(branch.id)}
                     disabled={!branch.isDeletable}
                     className="text-gray-400 hover:text-pink-500 disabled:opacity-30 disabled:hover:text-gray-400 transition-colors"
-                    title={!branch.isDeletable ? "La branche ne peut pas être supprimée" : "Supprimer"}
+                    title={!branch.isDeletable ? "La compétence ne peut pas être supprimée" : "Supprimer"}
                 >
                     <Trash2 size={18} />
                 </button>
@@ -165,7 +165,7 @@ export const SortableBranchItem: React.FC<SortableBranchItemProps> = ({
                         value={branch.description || ''}
                         onChange={(e) => onChange(branch.id, { description: e.target.value })}
                         maxLength={500}
-                        placeholder="Ajoutez une description pour cette branche..."
+                        placeholder="Ajoutez une description pour cette compétence..."
                         className="glass-input w-full min-h-[60px] resize-y custom-scrollbar"
                     />
                     <div className="text-[10px] text-gray-500 text-right">

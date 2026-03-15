@@ -116,7 +116,7 @@ const renderCustomTick = (props: any) => {
             <div className="flex items-center justify-between border-b border-white/10 pb-1">
               <span className="font-bold text-xs" style={{ color: labelColor }}>{branch.subject}</span>
               <button
-                title={branch.isDeletable ? "Delete Branch" : "Core branches cannot be deleted"}
+                title={branch.isDeletable ? "Supprimer la compétence" : "Les compétences de base ne peuvent pas être supprimées"}
                 disabled={!branch.isDeletable}
                 className="radar-delete-button p-1 text-gray-400 hover:text-pink-500 hover:bg-pink-900/30 rounded disabled:opacity-30 disabled:hover:bg-transparent transition-colors"
                 style={{ zIndex: 100000, position: 'relative' }}
@@ -127,7 +127,7 @@ const renderCustomTick = (props: any) => {
             </div>
 
             <p className="text-[10px] text-gray-300 font-mono leading-relaxed line-clamp-4 break-words custom-scrollbar overflow-y-auto max-h-[60px]">
-              {branch.description || <span className="text-gray-600 italic">No description provided.</span>}
+              {branch.description || <span className="text-gray-600 italic">Aucune description fournie.</span>}
             </p>
           </div>
         </foreignObject>
@@ -208,7 +208,7 @@ export const RadarVisualizer: React.FC<RadarVisualizerProps> = ({
 
       return {
         id: b.id,
-        subject: b.name || 'Unnamed',
+        subject: b.name || 'Sans nom',
         normalizedValue,
         originalValue: b.value,
         min: b.min,
